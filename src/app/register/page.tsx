@@ -19,16 +19,14 @@ function Register() {
             const result =await axios.post('/api/auth/register',{
                 name,email,password
             })
-            console.log(result)
+            router.push('/login')
             
         } catch (error) {
             console.log(error)
             
         }
-
     }
-
-
+    
   return (
     <div className='min-h-screen flex justify-center items-center bg-black text-white px-4'>
         <div className='w-full max-w-md border-2 border-white rounded-2xl p-8 shadow-lg bg-gray-800'>
@@ -78,7 +76,7 @@ function Register() {
                     <hr className='flex-grow border-gray-500'/>
                 </div>
 
-                <button className='w-full flex items-center justify-center gap-2 py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-400 transition-color' onClick={()=>signIn('google')}><FcGoogle /><span>Sign Up with Google</span></button>
+                <button className='w-full flex items-center justify-center gap-2 py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-400 transition-color' onClick={()=>signIn('google',{callbackUrl:"/"})}><FcGoogle /><span>Sign Up with Google</span></button>
             
             
         </div>

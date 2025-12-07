@@ -12,9 +12,6 @@ function Login() {
 
     const router =useRouter()
 
-    const session =useSession()
-    console.log(session)
-
     const handleSignIn = async (e:React.FormEvent)=>{
         e.preventDefault();
 
@@ -22,16 +19,13 @@ function Login() {
             const result = await signIn('credentials',{
                 email,password,
             })
-            console.log(result)
-            
+            router.push('/')
+
         } catch (error) {
             console.log(error)
             
         }
     }
-
-    
-
 
   return (
     <div className='min-h-screen flex justify-center items-center bg-black text-white px-4'>
@@ -73,7 +67,7 @@ function Login() {
                     <hr className='flex-grow border-gray-500'/>
                 </div>
 
-                <button className='w-full flex items-center justify-center gap-2 py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-400 transition-color'><FcGoogle /><span>Sign In with Google</span></button>
+                <button className='w-full flex items-center justify-center gap-2 py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-400 transition-color' onClick={()=>signIn('google',{callbackUrl:"/"})}><FcGoogle /><span>Sign In with Google</span></button>
             
             
         </div>
