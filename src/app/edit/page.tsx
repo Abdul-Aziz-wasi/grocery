@@ -1,16 +1,18 @@
 "use client"
-import { useSession } from 'next-auth/react'
+import { userDataContext } from '@/src/context/UserContext';
+import axios from 'axios';
 import Image from 'next/image'
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { CgProfile } from "react-icons/cg";
 
 
 function Page() {
-    const {data}=useSession()
+    const data =useContext(userDataContext)
     const [name,setName]=useState("")
     const [image,setImage]=useState('')
     const [newImage,setNewImage]=useState<File>()
     const imageInput=useRef<HTMLInputElement>(null);
+    const [loading, setLoading]=useState(false)
 
     const handleImage = (e:React.ChangeEvent<HTMLInputElement>)=>{
         const files =e.target.files;
@@ -21,10 +23,32 @@ function Page() {
 
     }
 
+    const handleSubmit = async (e:React.FormEvent)=>{
+        e.preventDefault();
+        setLoading(true)
+        try {
+            const formData =new FormData()
+            formData.append("name", name)
+
+            if(newImage){
+                formData.append("file",newImage)
+            }
+            const result =await axios.post("api/edit",formData)
+            setLoading(false)
+            data?.setUser(result.data)
+
+        } catch (error) {
+            console.log(error)
+            setLoading(false)
+            
+        }
+
+    }
+
    useEffect(() => {
   if(data) {
     setName(data?.user?.name as string);
-    setImage(data?.user.image as string);
+    setImage(data?.user?.image as string);
   }
 }, [data]);
   return (
@@ -34,7 +58,7 @@ function Page() {
 
             <h1 className='text-2xl font-semibold text-center mb-2'>Edit Profile</h1>
 
-            <form className='space-y-2 flex flex-col items-center w-full'>
+            <form className='space-y-2 flex flex-col items-center w-full' onSubmit={handleSubmit}>
                 <div className='w-[100px] h-[100px] rounded-full border-2 flex justify-center items-center border-white transition-all hover:border-blue-500 text-white hover:text-blue-500 cursor-pointer overflow-hidden relative' onClick={()=>{
                     imageInput.current?.click()
                 }}>
@@ -52,7 +76,7 @@ function Page() {
                     />
                 </div>
 
-                <button className='w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-400 transition-color'>Save</button>
+                <button className='w-full py-2 px-4 bg-white text-black font-semibold rounded-lg hover:bg-gray-400 transition-color' disabled={loading}>{loading?"Saving...": "Save"}</button>
 
             </form>
 
